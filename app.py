@@ -26,18 +26,22 @@ if uploaded_file:
     except Exception as e:
         st.error(f"Error reading file: {e}")
         st.stop()
+    
+    # --- NEW FIX: Strip whitespace from all column names ---
+    # This cleans up names like " Date " to "Date"
+    df.columns = [c.strip() for c in df.columns]
 
     st.write("### Raw Data Preview")
     st.dataframe(df.head())
 
     # --- Specific Column Names for your File ---
-    # We will use the exact column names from your CSV
     date_col = "Date"
     ltp_col = "close"
 
     # Check if these columns exist
     if date_col not in df.columns or ltp_col not in df.columns:
         st.error(f"❌ '{date_col}' or '{ltp_col}' columns not found. Please check your CSV.")
+        st.write("Found columns:", df.columns.tolist()) # Helper to show what was found
     else:
         # --- Data Processing Pipeline ---
         try:
